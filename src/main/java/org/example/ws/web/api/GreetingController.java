@@ -12,6 +12,19 @@ import java.util.Collection;
 @RestController  // informs spring mvc that objects returned from this controller methods are either JSON or example.
 public class GreetingController {
 
+  // temporary helper methods to manage model object - a hard coded collection of greeting object. In actual, it will serve data from spring data repository
+  Map<BigInteger,Greeting> greetingObjectCollection;
+
+  Greeting g1 = new Greeting();
+  Greeting g2 = new Greeting();
+  g1.setId("");
+  g1.setText("");
+  g2.setId("");
+  g2.setText("");
+  greetingObjectCollection.put(1, g1);
+  greetingObjectCollection.put(2, g2);
+
+
 /* ResponseEntity is a wrapper class that converts JSON/XML objects to HTTP response objects
 * Type is any java object, in this case a collection of Greeting objects
 * RequestMapping annotatation informs spring that this method receives HTTP request objects.
@@ -22,6 +35,7 @@ public class GreetingController {
          method=RequestMethod.Get,
          produces=MediaType.APPLICATION_JSON_VALUE)
   public ResponseEntity<Collection<Greeting>> getGreetings(){
+    
 
   }
 

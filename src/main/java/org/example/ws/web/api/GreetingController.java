@@ -5,24 +5,41 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 
 import org.example.ws.model.Greeting;
 import java.util.Collection;
+import java.math.BigInteger;
+import java.util.Map;
+import java.util.HashMap;
 
 @RestController  // informs spring mvc that objects returned from this controller methods are either JSON or example.
 public class GreetingController {
 
   // temporary helper methods to manage model object - a hard coded collection of greeting object. In actual, it will serve data from spring data repository
-  Map<BigInteger,Greeting> greetingObjectCollection;
+  private static BigInteger nextId;
+  private static Map<BigInteger,Greeting> greetingMap;
 
-  Greeting g1 = new Greeting();
-  Greeting g2 = new Greeting();
-  g1.setId("");
-  g1.setText("");
-  g2.setId("");
-  g2.setText("");
-  greetingObjectCollection.put(1, g1);
-  greetingObjectCollection.put(2, g2);
+  private static Greeting save(Greeting greeting) {
+    if (greetingMap == null) {
+      greetingMap = new HashMap<BigInteger,Greeting>();
+      nextId = BigInteger.ONE;
+    }
+    greeting.setId(nextId);
+    nextId = nextId.add(BigInteger.ONE);
+    greetingMap.put(greeting.getId(), greeting);
+    return greeting;
+  }
+
+  static {
+    Greeting g1 = new Greeting();
+    g1.setText("Hello World!");
+    save(g1);
+
+    Greeting g2 = new Greeting();
+    g2.setText("Hola!");
+    save(g2);
+  }
 
 
 /* ResponseEntity is a wrapper class that converts JSON/XML objects to HTTP response objects
@@ -32,11 +49,13 @@ public class GreetingController {
 */
   @RequestMapping(
          value="/api/greetings",
-         method=RequestMethod.Get,
+         method=RequestMethod.GET,
          produces=MediaType.APPLICATION_JSON_VALUE)
-  public ResponseEntity<Collection<Greeting>> getGreetings(){
-    
+  public ResponseEntity<Collection<Greeting>> getGreetings() {
 
+      Collection<Greeting> greetings = greetingMap.values();
+      return new ResponseEntity<Collection<Greeting>>(greetings,
+             HttpStatus.OK);
   }
 
 

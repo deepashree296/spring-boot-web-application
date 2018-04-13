@@ -25,6 +25,7 @@ public class GreetingController {
   // temporary data store
   private static Map<BigInteger,Greeting> greetingMap;
 
+// helper method to create or update greeting objects in the temp data repo- map
   private static Greeting save(Greeting greeting) {
     if (greetingMap == null) {
       greetingMap = new HashMap<BigInteger,Greeting>();
@@ -37,9 +38,9 @@ public class GreetingController {
       if (oldGreetingObj == null) {
         return null;
       }
-        greetingMap.remove(greeting.getId());
-        greetingMap.put(greeting.getId(), greeting);
-        return  greeting;
+      greetingMap.remove(greeting.getId());
+      greetingMap.put(greeting.getId(), greeting);
+      return  greeting;
 
     }
     // If save is called to create new greeting object
@@ -47,6 +48,15 @@ public class GreetingController {
     nextId = nextId.add(BigInteger.ONE);
     greetingMap.put(greeting.getId(), greeting);
     return greeting;
+  }
+
+  // helper method to remove data from temp data repo - greetingMap
+  private static Boolean delete(BigInteger id ) {
+    Greeting deletedGreetingObj = greetingMap.remove(id);
+    if (deletedGreetingObj == null) {
+      return false;
+    }
+    return true;
   }
 
 // this code block will get executed for the first time JVM loads this class
@@ -74,7 +84,8 @@ public class GreetingController {
   public ResponseEntity<Collection<Greeting>> getGreetings() {
 
       Collection<Greeting> greetings = greetingMap.values();
-      return new ResponseEntity<Collection<Greeting>>(greetings,
+      return new ResponseEntity<Collection<Greeting>>(
+             greetings,
              HttpStatus.OK);
   }
 
@@ -87,9 +98,11 @@ public class GreetingController {
 
     Greeting greeting = greetingMap.get(id);
     if (greeting == null) {
-      return new ResponseEntity<Greeting>(HttpStatus.NOT_FOUND);
+      return new ResponseEntity<Greeting>(
+             HttpStatus.NOT_FOUND);
     }
-      return new ResponseEntity<Greeting>(greeting,
+      return new ResponseEntity<Greeting>(
+             greeting,
              HttpStatus.OK);
   }
 
@@ -102,7 +115,8 @@ public class GreetingController {
           )
   public ResponseEntity<Greeting> createGreeting(@RequestBody Greeting greeting) {
     Greeting savedGreeting = save(greeting);
-    return new ResponseEntity<Greeting>(savedGreeting,
+    return new ResponseEntity<Greeting>(
+               savedGreeting,
                HttpStatus.CREATED);
   }
 
@@ -112,16 +126,34 @@ public class GreetingController {
           consumes=MediaType.APPLICATION_JSON_VALUE,
           produces=MediaType.APPLICATION_JSON_VALUE
           )
-  public ResponseEntity<Greeting> updateGreeting(@PathVariable("id") BigInteger id, @RequestBody Greeting greeting) {
+  public ResponseEntity<Greeting> updateGreeting(@RequestBody Greeting greeting) {
 
     Greeting updatedGreeting = save(greeting);
     if (updatedGreeting == null) {
-      return new ResponseEntity<Greeting>(HttpStatus.NOT_FOUND);
+      return new ResponseEntity<Greeting>(
+            HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    return new ResponseEntity<Greeting>(updatedGreeting,
+    return new ResponseEntity<Greeting>(
+               updatedGreeting,
                HttpStatus.OK);
   }
 
+  @RequestMapping(
+         value="/api/greetings/{id}",
+         method=RequestMethod.DELETE,
+         consumes=MediaType.APPLICATION_JSON_VALUE,
+         produces=MediaType.APPLICATION_JSON_VALUE
+         )
+  public ResponseEntity<Greeting> deleteGreeting(@PathVariable BigInteger id, @RequestBody Greeting greeting) {
+    Boolean isDeleted = delete(id);
+    if (!isDeleted) {
+      return new ResponseEntity<Greeting>(
+            HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    return new ResponseEntity<Greeting>(
+            HttpStatus.NO_CONTENT);
+
+  }
 
 
 }

@@ -7,6 +7,7 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.cache.guava.GuavaCacheManager;
 
 
 /**g
@@ -26,7 +27,7 @@ public class Application
 // defining cache manager implementation bean
 @Bean
 public CacheManager cacheManager() {
-  ConcurrentMapCacheManager cacheManager = new ConcurrentMapCacheManager(
+  GuavaCacheManager cacheManager = new GuavaCacheManager(
                     "greetings");
   return cacheManager;
 

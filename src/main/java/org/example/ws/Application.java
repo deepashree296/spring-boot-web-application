@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.cache.guava.GuavaCacheManager;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 
 /**g
@@ -17,6 +18,7 @@ import org.springframework.cache.guava.GuavaCacheManager;
  @SpringBootApplication
  @EnableTransactionManagement
  @EnableCaching
+ @EnableScheduling
 public class Application
 {
     public static void main( String[] args ) throws Exception

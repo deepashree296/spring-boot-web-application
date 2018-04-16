@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.HashMap;
 
-@RestController  // informs spring mvc that objects returned from this controller methods are either JSON or example.
+@RestController  // informs spring mvc that objects returned from this controller methods are either JSON or XML.
 public class GreetingController {
 
 @Autowired // to tell spring to inject an instance of GreetingService into the controller class. use of Interface type for dependency injection  follows programming by
